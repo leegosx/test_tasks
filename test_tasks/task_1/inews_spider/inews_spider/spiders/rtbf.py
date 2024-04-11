@@ -4,6 +4,7 @@ import scrapy
 class RtbfSpider(scrapy.Spider):
     name = "rtbf"
     allowed_domains = ["rtbf.be"]
+    # use 'en-continu' because it contains all articles
     start_urls = ["https://www.rtbf.be/en-continu"]
 
     user_agent = {
