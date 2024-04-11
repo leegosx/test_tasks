@@ -11,9 +11,21 @@ class RtpSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        for link in response.xpath("//a/@href").getall():
-            if '/noticias/' in link:
-                yield {
-                    'base_url': response.url,
-                    'url': response.urljoin(link),
-                }
+        category_links = response.xpath("//nav//a[contains(@href, '/noticias/')]/@href").getall()
+        for link in category_links:
+            yield response.follow(link, self.parse_category)
+
+        news_links = response.xpath("//a[contains(@href, '/noticias/')]/@href").getall()
+        for link in news_links:
+            yield {
+                'base_url': response.url,
+                'url': response.urljoin(link),
+            }
+
+    def parse_category(self, response):
+        news_links = response.xpath("//a[contains(@href, '/noticias/')]/@href").getall()
+        for link in news_links:
+            yield {
+                'base_url': response.url,
+                'url': response.urljoin(link),
+            }
